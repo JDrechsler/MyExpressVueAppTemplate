@@ -1,11 +1,14 @@
 var socket = io()
 
 var vueVars = {
-    status: "works"
+	status: "works",
+	answer: ''
 }
 
 var vueMethods = {
-
+	getServerAnswer() {
+		socket.emit('request-answer')
+	}
 }
 
 var vueWatchers = {
@@ -16,26 +19,21 @@ var vueComputed = {
 
 }
 
-
-document.addEventListener("DOMContentLoaded", () => {
-    new Vue({
-        el: '#app',
-        data: vueVars,
-        methods: vueMethods,
-        computed: vueComputed,
-        watch: vueWatchers
-    })
-
-    console.log('Client ist ready')
-    socket.emit('halloVonClient')
-    socket.on('halloVonServer', function(message) {
-        console.log(message)
-    })
-
-    document.ondragover = document.ondrop = (ev) => {
-        ev.preventDefault();
-    }
-    document.body.ondrop = (ev) => {
-        ev.preventDefault();
-    }
+new Vue({
+	el: '#vue-app',
+	data: vueVars,
+	methods: vueMethods,
+	computed: vueComputed,
+	watch: vueWatchers
 })
+
+socket.on('response-answer', function (answer) {
+	vueVars.answer = answer
+})
+
+document.ondragover = document.ondrop = (ev) => {
+	ev.preventDefault();
+}
+document.body.ondrop = (ev) => {
+	ev.preventDefault();
+}
